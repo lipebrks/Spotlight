@@ -100,7 +100,7 @@ document.addEventListener('DOMContentLoaded', function () {
     async function renderGroupsForEdital(editalId) {
         groupListContainer.innerHTML = 'Carregando grupos...';
         try {
-            const response = await fetch(`http://localhost:3000/grupos?noticiaId=${editalId}`);
+            const response = await fetch(`https://spotlight-backend-z6xo.onrender.com/grupos?noticiaId=${editalId}`);
             if (!response.ok) throw new Error('Falha ao buscar grupos.');
             const groups = await response.json();
 
@@ -123,7 +123,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
     async function openGroupDetailsModal(groupId) {
         try {
-            const response = await fetch(`http://localhost:3000/grupos/${groupId}`);
+            const response = await fetch(`https://spotlight-backend-z6xo.onrender.com/grupos/${groupId}`);
             if (!response.ok) throw new Error('Grupo não encontrado.');
             const group = await response.json();
             
@@ -192,7 +192,7 @@ document.addEventListener('DOMContentLoaded', function () {
         }).then(async (result) => {
             if (result.isConfirmed) {
                 try {
-                    const response = await fetch(`http://localhost:3000/grupos/${currentGroupId}`, {
+                    const response = await fetch(`https://spotlight-backend-z6xo.onrender.com/grupos/${currentGroupId}`, {
                         method: 'DELETE'
                     });
                     if (!response.ok) throw new Error('Falha ao excluir o grupo.');
@@ -219,7 +219,7 @@ document.addEventListener('DOMContentLoaded', function () {
         };
 
         try {
-            const response = await fetch(`http://localhost:3000/grupos/${currentGroupId}`, {
+            const response = await fetch(`https://spotlight-backend-z6xo.onrender.com/grupos/${currentGroupId}`, {
                 method: 'PATCH',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(updatedGroup)
@@ -313,7 +313,7 @@ document.addEventListener('DOMContentLoaded', function () {
         }
 
         try {
-            const response = await fetch(`http://localhost:3000/noticias/${currentEditalId}`);
+            const response = await fetch(`https://spotlight-backend-z6xo.onrender.com/noticias/${currentEditalId}`);
             if (!response.ok) throw new Error('Não foi possível obter dados do edital.');
             const edital = await response.json();
 
@@ -331,7 +331,7 @@ document.addEventListener('DOMContentLoaded', function () {
             }
 
             // 1. Atualiza no JSON Server (API)
-            const patchResponse = await fetch(`http://localhost:3000/noticias/${currentEditalId}`, {
+            const patchResponse = await fetch(`https://spotlight-backend-z6xo.onrender.com/noticias/${currentEditalId}`, {
                 method: 'PATCH',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ inscritos: novosInscritos })
@@ -381,7 +381,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
     async function carregarEditais(filterTerm = '') {
         try {
-            const response = await fetch('http://localhost:3000/noticias');
+            const response = await fetch('https://spotlight-backend-z6xo.onrender.com/noticias');
             if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
             allEditaisData = await response.json();
 
@@ -590,7 +590,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 const originalEvent = allEditaisData.find(e => e.id == id);
                 novoEvento.imagem = (originalEvent && originalEvent.imagem) ? originalEvent.imagem : generateRandomPicsumUrl(600, 400);
 
-                const response = await fetch(`http://localhost:3000/noticias/${id}`, {
+                const response = await fetch(`https://spotlight-backend-z6xo.onrender.com/noticias/${id}`, {
                     method: 'PUT',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(novoEvento)
@@ -600,7 +600,7 @@ document.addEventListener('DOMContentLoaded', function () {
             } else {
                 novoEvento.imagem = generateRandomPicsumUrl(600, 400);
                 novoEvento.inscritos = [];
-                const response = await fetch('http://localhost:3000/noticias', {
+                const response = await fetch('https://spotlight-backend-z6xo.onrender.com/noticias', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(novoEvento)
@@ -622,7 +622,7 @@ document.addEventListener('DOMContentLoaded', function () {
             return;
         }
         try {
-            const response = await fetch(`http://localhost:3000/noticias/${id}`);
+            const response = await fetch(`https://spotlight-backend-z6xo.onrender.com/noticias/${id}`);
             if (!response.ok) throw new Error('Evento não encontrado para edição.');
             const editalParaEditar = await response.json();
             eventoSobreposicao.classList.remove('overlay-visible');
@@ -650,7 +650,7 @@ document.addEventListener('DOMContentLoaded', function () {
         }).then(async (result) => {
             if (result.isConfirmed) {
                 try {
-                    const response = await fetch(`http://localhost:3000/noticias/${id}`, { method: 'DELETE' });
+                    const response = await fetch(`https://spotlight-backend-z6xo.onrender.com/noticias/${id}`, { method: 'DELETE' });
                     if (!response.ok) throw new Error('Falha ao excluir evento.');
                     Swal.fire('Sucesso!', 'Evento excluído com sucesso!', 'success');
                     esconderFormulario();
@@ -719,7 +719,7 @@ document.addEventListener('DOMContentLoaded', function () {
         };
 
         try {
-            const response = await fetch('http://localhost:3000/grupos', {
+            const response = await fetch('https://spotlight-backend-z6xo.onrender.com/grupos', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(newGroup)

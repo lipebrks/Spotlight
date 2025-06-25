@@ -27,7 +27,7 @@ document.addEventListener('DOMContentLoaded', function () {
             }).then(async (result) => {
                 if (result.isConfirmed) {
                     try {
-                        const response = await fetch(`http://localhost:3000/usuarios/${usuarioParaExcluir.id}`, {
+                        const response = await fetch(`https://spotlight-backend-z6xo.onrender.com/usuarios/${usuarioParaExcluir.id}`, {
                             method: 'DELETE',
                             headers: {
                                 'Content-Type': 'application/json'

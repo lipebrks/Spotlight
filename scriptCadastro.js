@@ -38,7 +38,7 @@ document.addEventListener('DOMContentLoaded', () => {
             };
 
             try {
-                const response = await fetch('http://localhost:3000/noticias', {
+                const response = await fetch('https://spotlight-backend-z6xo.onrender.com/noticias', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'

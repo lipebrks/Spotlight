@@ -29,7 +29,7 @@ async function loadUserProfile() {
         currentUserId = usuarioLogado.id; 
         if (!currentUserId && usuarioLogado.login) {
             // Se não tiver ID direto, tenta buscar pelo login para obter o ID
-            const response = await fetch(`http://localhost:3000/usuarios?login=${usuarioLogado.login}`);
+            const response = await fetch(`https://spotlight-backend-z6xo.onrender.com/usuarios?login=${usuarioLogado.login}`);
             const users = await response.json();
             if (users.length > 0) {
                 currentUserId = users[0].id;
@@ -53,7 +53,7 @@ async function loadUserProfile() {
     }
 
     try {
-        const response = await fetch(`http://localhost:3000/usuarios/${currentUserId}`);
+        const response = await fetch(`https://spotlight-backend-z6xo.onrender.com/usuarios/${currentUserId}`);
         if (!response.ok) {
             throw new Error('Erro ao buscar dados do perfil. Status: ' + response.status);
         }
@@ -167,7 +167,7 @@ async function saveChanges() {
         updatedUserData.senha = newSenha; // Nota: Em um sistema real, a senha deveria ser hashed antes de salvar.
     } else {
         // Tenta pegar a senha original (cuidado ao manipular senhas!)
-        const response = await fetch(`http://localhost:3000/usuarios/${currentUserId}`);
+        const response = await fetch(`https://spotlight-backend-z6xo.onrender.com/usuarios/${currentUserId}`);
         const existingUser = await response.json();
         if (existingUser && existingUser.senha) {
              updatedUserData.senha = existingUser.senha;
@@ -175,7 +175,7 @@ async function saveChanges() {
     }
 
     try {
-        const response = await fetch(`http://localhost:3000/usuarios/${currentUserId}`, {
+        const response = await fetch(`https://spotlight-backend-z6xo.onrender.com/usuarios/${currentUserId}`, {
             method: 'PUT', // PUT para substituir o recurso completo
             headers: {
                 'Content-Type': 'application/json'
