@@ -1,5 +1,5 @@
 let originalData = {};
-let currentUserId = null; // Para armazenar o ID do usuário logado
+let currentUserId = null;
 
 document.addEventListener("DOMContentLoaded", () => {
     loadUserProfile();
@@ -9,7 +9,6 @@ document.addEventListener("DOMContentLoaded", () => {
     document.getElementById("cancelButton").addEventListener("click", cancelEdit);
     document.getElementById("uploadPhoto").addEventListener("change", handlePhotoUpload);
 
-    // Event listeners para os checkboxes de produtor/artista
     document.getElementById("isProdutor").addEventListener("change", toggleRole);
     document.getElementById("isArtista").addEventListener("change", toggleRole);
 });
@@ -18,17 +17,16 @@ async function loadUserProfile() {
     const usuarioLogadoStr = sessionStorage.getItem('usuarioLogado');
     if (!usuarioLogadoStr) {
         alert('Nenhum usuário logado. Redirecionando para o login.');
-        window.location.href = 'login.html'; // Redireciona para o login se não houver usuário
+        window.location.href = 'login.html';
         return;
     }
 
     let usuarioLogado;
     try {
         usuarioLogado = JSON.parse(usuarioLogadoStr);
-        // Assumindo que o objeto do usuário no sessionStorage tem um 'id' ou 'login'
-        currentUserId = usuarioLogado.id; 
+        currentUserId = usuarioLogado.id;
         if (!currentUserId && usuarioLogado.login) {
-            // Se não tiver ID direto, tenta buscar pelo login para obter o ID
+
             const response = await fetch(`https://spotlight-backend-z6xo.onrender.com/usuarios?login=${usuarioLogado.login}`);
             const users = await response.json();
             if (users.length > 0) {
@@ -59,59 +57,55 @@ async function loadUserProfile() {
         }
         const userData = await response.json();
 
-        // Popular os campos de exibição
+
         document.getElementById("nomeDisplay").textContent = userData.nome || 'Não informado';
         document.getElementById("emailDisplay").textContent = userData.email || 'Não informado';
         document.getElementById("loginDisplay").textContent = userData.login || 'Não informado';
-        document.getElementById("bioDisplay").textContent = userData.biografia || 'Adicione uma biografia...'; // Novo campo biografia
-        document.getElementById("profileImage").src = userData.foto || 'avatar-15.png'; // Usar a foto salva ou padrão
+        document.getElementById("bioDisplay").textContent = userData.biografia || 'Adicione uma biografia...';
+        document.getElementById("profileImage").src = userData.foto || 'avatar-15.png';
 
         document.getElementById("isProdutor").checked = userData.produtor;
         document.getElementById("isArtista").checked = userData.artista;
 
-        // Popular as tags
         const tagList = document.getElementById("tagList");
-        tagList.innerHTML = ""; // Limpa tags existentes
+        tagList.innerHTML = "";
         if (userData.tags && Array.isArray(userData.tags)) {
             userData.tags.forEach(tag => {
                 tagList.appendChild(createTagElement(tag));
             });
         }
 
-        // Salva os dados originais para o caso de cancelamento
         originalData = { ...userData, tags: getCurrentTags() };
 
     } catch (error) {
         console.error('Erro ao carregar perfil:', error);
         alert(`Erro ao carregar perfil: ${error.message}.`);
-        // Pode redirecionar para o login ou exibir uma mensagem de erro persistente
+       
     }
 }
 
 function enableEdit() {
-    // Esconde os campos de exibição, mostra os de input
+    
     document.getElementById("nomeDisplay").classList.add("hidden");
     document.getElementById("emailDisplay").classList.add("hidden");
-    // Login display é apenas visual e desabilitado para edição direta por segurança
-    // document.getElementById("loginDisplay").classList.add("hidden"); 
     document.getElementById("bioDisplay").classList.add("hidden");
     document.getElementById("senhaDisplay").classList.add("hidden");
 
 
     document.getElementById("nomeInput").classList.remove("hidden");
     document.getElementById("emailInput").classList.remove("hidden");
-    // document.getElementById("loginInput").classList.remove("hidden"); // Login fica desabilitado
+    
     document.getElementById("bioInput").classList.remove("hidden");
     document.getElementById("senhaInput").classList.remove("hidden");
 
-    // Popula os campos de input com os valores atuais
+   
     document.getElementById("nomeInput").value = document.getElementById("nomeDisplay").textContent;
     document.getElementById("emailInput").value = document.getElementById("emailDisplay").textContent;
-    document.getElementById("loginInput").value = document.getElementById("loginDisplay").textContent; // Apenas para exibição no input desabilitado
+    document.getElementById("loginInput").value = document.getElementById("loginDisplay").textContent;
     document.getElementById("bioInput").value = document.getElementById("bioDisplay").textContent === 'Adicione uma biografia...' ? '' : document.getElementById("bioDisplay").textContent;
-    document.getElementById("senhaInput").value = ''; // Sempre limpa para nova senha
+    document.getElementById("senhaInput").value = ''; 
 
-    // Habilita a edição de foto e os checkboxes de tipo de usuário
+    
     document.querySelector(".edit-photo-label").classList.remove("hidden");
     document.getElementById("isProdutor").disabled = false;
     document.getElementById("isArtista").disabled = false;
@@ -122,7 +116,7 @@ function enableEdit() {
     document.getElementById("cancelButton").classList.remove("hidden");
     document.getElementById("addTagContainer").classList.remove("hidden");
 
-    // Salva o estado original antes de editar para o cancelamento
+   
     originalData = {
         nome: document.getElementById("nomeDisplay").textContent,
         email: document.getElementById("emailDisplay").textContent,
@@ -138,8 +132,8 @@ function enableEdit() {
 async function saveChanges() {
     const newNome = document.getElementById("nomeInput").value;
     const newEmail = document.getElementById("emailInput").value;
-    const newLogin = document.getElementById("loginDisplay").textContent; // Login não é editável diretamente aqui
-    const newSenha = document.getElementById("senhaInput").value; // Nova senha (pode estar vazia)
+    const newLogin = document.getElementById("loginDisplay").textContent;
+    const newSenha = document.getElementById("senhaInput").value; 
     const newBio = document.getElementById("bioInput").value;
     const newFoto = document.getElementById("profileImage").src;
     const newIsProdutor = document.getElementById("isProdutor").checked;
@@ -154,29 +148,29 @@ async function saveChanges() {
     const updatedUserData = {
         nome: newNome,
         email: newEmail,
-        login: newLogin, // Mantém o login original
-        biografia: newBio, // Adiciona biografia
+        login: newLogin, 
+        biografia: newBio,
         foto: newFoto,
         produtor: newIsProdutor,
         artista: newIsArtista,
-        tags: newTags // Adiciona tags
+        tags: newTags 
     };
 
-    // Se uma nova senha foi digitada, inclua-a. Caso contrário, mantenha a senha existente.
+   
     if (newSenha) {
-        updatedUserData.senha = newSenha; // Nota: Em um sistema real, a senha deveria ser hashed antes de salvar.
+        updatedUserData.senha = newSenha; 
     } else {
-        // Tenta pegar a senha original (cuidado ao manipular senhas!)
+        
         const response = await fetch(`https://spotlight-backend-z6xo.onrender.com/usuarios/${currentUserId}`);
         const existingUser = await response.json();
         if (existingUser && existingUser.senha) {
-             updatedUserData.senha = existingUser.senha;
+            updatedUserData.senha = existingUser.senha;
         }
     }
 
     try {
         const response = await fetch(`https://spotlight-backend-z6xo.onrender.com/usuarios/${currentUserId}`, {
-            method: 'PUT', // PUT para substituir o recurso completo
+            method: 'PUT',
             headers: {
                 'Content-Type': 'application/json'
             },
@@ -190,10 +184,10 @@ async function saveChanges() {
         const savedUser = await response.json();
         console.log('Perfil atualizado:', savedUser);
 
-        // Atualiza o sessionStorage com os novos dados do usuário para manter a sessão atualizada
+        
         sessionStorage.setItem('usuarioLogado', JSON.stringify(savedUser));
 
-        // Atualiza a interface
+        
         document.getElementById("nomeDisplay").textContent = savedUser.nome;
         document.getElementById("emailDisplay").textContent = savedUser.email;
         document.getElementById("loginDisplay").textContent = savedUser.login;
@@ -201,7 +195,7 @@ async function saveChanges() {
         document.getElementById("profileImage").src = savedUser.foto;
         document.getElementById("isProdutor").checked = savedUser.produtor;
         document.getElementById("isArtista").checked = savedUser.artista;
-        
+
         const tagList = document.getElementById("tagList");
         tagList.innerHTML = "";
         if (savedUser.tags && Array.isArray(savedUser.tags)) {
@@ -220,10 +214,10 @@ async function saveChanges() {
 }
 
 function cancelEdit() {
-    // Restaura os dados originais
+   
     document.getElementById("nomeDisplay").textContent = originalData.nome;
     document.getElementById("emailDisplay").textContent = originalData.email;
-    document.getElementById("loginDisplay").textContent = originalData.login; // Login não editável
+    document.getElementById("loginDisplay").textContent = originalData.login;
     document.getElementById("bioDisplay").textContent = originalData.biografia || 'Adicione uma biografia...';
     document.getElementById("profileImage").src = originalData.foto;
     document.getElementById("isProdutor").checked = originalData.produtor;
@@ -241,7 +235,7 @@ function cancelEdit() {
 }
 
 function endEditMode() {
-    // Esconde campos de input, mostra de exibição
+    
     document.getElementById("nomeDisplay").classList.remove("hidden");
     document.getElementById("emailDisplay").classList.remove("hidden");
     document.getElementById("loginDisplay").classList.remove("hidden");
@@ -256,7 +250,7 @@ function endEditMode() {
     document.getElementById("senhaInput").classList.add("hidden");
 
 
-    // Desabilita edição de foto e checkboxes
+   
     document.querySelector(".edit-photo-label").classList.add("hidden");
     document.getElementById("isProdutor").disabled = true;
     document.getElementById("isArtista").disabled = true;
@@ -272,7 +266,7 @@ function handlePhotoUpload(event) {
     if (!file) return;
 
     const reader = new FileReader();
-    reader.onload = function(e) {
+    reader.onload = function (e) {
         document.getElementById("profileImage").src = e.target.result;
     };
     reader.readAsDataURL(file);
@@ -325,7 +319,7 @@ function getCurrentTags() {
     return tags;
 }
 
-// Função para garantir que apenas um dos checkboxes de função seja selecionado
+
 function toggleRole(event) {
     const isProdutorCheckbox = document.getElementById('isProdutor');
     const isArtistaCheckbox = document.getElementById('isArtista');

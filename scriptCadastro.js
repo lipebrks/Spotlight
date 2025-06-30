@@ -1,7 +1,7 @@
 document.addEventListener('DOMContentLoaded', () => {
     const formCadastroEvento = document.getElementById('formCadastroEvento');
     const mensagemStatus = document.getElementById('mensagemStatus');
-    const userIconLink = document.getElementById('user-icon-link'); // Adicionado para o link do perfil
+    const userIconLink = document.getElementById('user-icon-link');
 
     const imagensAleatorias = [
         "https://source.unsplash.com/random/300x150?art,music",
@@ -68,11 +68,10 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // Lógica para redirecionar o ícone do perfil
     if (userIconLink) {
         userIconLink.addEventListener('click', (event) => {
-            event.preventDefault(); // Impede o comportamento padrão do link (ir para login.html)
-            window.location.href = 'perfil.html'; // Redireciona para a nova página de perfil
+            event.preventDefault();
+            window.location.href = 'perfil.html';
         });
     }
 });

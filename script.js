@@ -1,5 +1,5 @@
 document.addEventListener('DOMContentLoaded', function () {
-    // --- Seletores de Elementos Existentes ---
+
     const eventoSobreposicao = document.getElementById('sobreposicao');
     const btnFecharSobreposicao = document.getElementById('btnFecharSobreposicao');
     const imgEdital = document.getElementById('sobreposicao-img');
@@ -22,8 +22,7 @@ document.addEventListener('DOMContentLoaded', function () {
     const eventoFormSobreposicao = document.getElementById('eventoFormSobreposicao');
     const fecharFormBtn = document.getElementById('fecharFormBtn');
     const eventoForm = document.getElementById('eventoForm');
-    
-    // --- Seletores de Elementos para Grupos ---
+
     const groupSection = document.getElementById('groupSection');
     const groupListContainer = document.getElementById('groupListContainer');
     const createGroupModal = document.getElementById('createGroupModal');
@@ -31,8 +30,7 @@ document.addEventListener('DOMContentLoaded', function () {
     const closeGroupModalBtn = document.getElementById('closeGroupModalBtn');
     const cancelGroupCreationBtn = document.getElementById('cancelGroupCreationBtn');
     const createGroupForm = document.getElementById('createGroupForm');
-    
-    // --- Seletores do Modal de Detalhes do Grupo ---
+
     const groupDetailsModal = document.getElementById('groupDetailsModal');
     const closeGroupDetailsModalBtn = document.getElementById('closeGroupDetailsModalBtn');
     const groupDetailsView = document.getElementById('groupDetailsView');
@@ -72,27 +70,21 @@ document.addEventListener('DOMContentLoaded', function () {
     function generateRandomPicsumUrl(width = 60, height = 60) {
         return `https://picsum.photos/${width}/${height}?random=${Math.floor(Math.random() * 1000)}`;
     }
-    
-    // Função para verificar se o usuário é artista
+
     function isArtista() {
         return usuarioLogado && usuarioLogado.tipo === 'artista';
     }
 
-    // Função para esconder botões CRUD para artistas
     function hideCrudButtonsForArtista() {
         if (isArtista()) {
-            // Esconde botões de editar/excluir eventos
             if (btnEditarSobreposicao) btnEditarSobreposicao.style.display = 'none';
             if (btnExcluirSobreposicao) btnExcluirSobreposicao.style.display = 'none';
-            
-            // Esconde botão de novo grupo
+
             if (novoGrupoBtn) novoGrupoBtn.style.display = 'none';
-            
-            // Esconde botões de editar/excluir grupos
+
             if (editGroupBtn) editGroupBtn.style.display = 'none';
             if (deleteGroupBtn) deleteGroupBtn.style.display = 'none';
-            
-            // Esconde botão de criar grupo
+
             if (criarGrupoBtn) criarGrupoBtn.style.display = 'none';
         }
     }
@@ -126,13 +118,13 @@ document.addEventListener('DOMContentLoaded', function () {
             const response = await fetch(`https://spotlight-backend-z6xo.onrender.com/grupos/${groupId}`);
             if (!response.ok) throw new Error('Grupo não encontrado.');
             const group = await response.json();
-            
+
             currentGroupId = group.id;
 
             groupDetailsImage.src = group.imagem || 'https://via.placeholder.com/120';
             groupDetailsName.textContent = group.nome;
             groupDetailsDescription.textContent = group.descricao;
-            
+
             document.getElementById('groupEditName').value = group.nome;
             document.getElementById('groupEditDescription').value = group.descricao;
             document.getElementById('groupEditAvatar').value = group.imagem;
@@ -143,7 +135,7 @@ document.addEventListener('DOMContentLoaded', function () {
             } else {
                 actionButtons.classList.add('hidden');
             }
-            
+
             groupDetailsView.classList.remove('hidden');
             groupEditView.classList.add('hidden');
             groupDetailsModal.classList.add('overlay-visible');
@@ -179,7 +171,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
     deleteGroupBtn.addEventListener('click', () => {
         if (!currentGroupId) return;
-        
+
         Swal.fire({
             title: 'Tem certeza?',
             text: "Esta ação não pode ser revertida!",
@@ -196,11 +188,11 @@ document.addEventListener('DOMContentLoaded', function () {
                         method: 'DELETE'
                     });
                     if (!response.ok) throw new Error('Falha ao excluir o grupo.');
-                    
+
                     Swal.fire('Excluído!', 'O grupo foi excluído com sucesso.', 'success');
                     groupDetailsModal.classList.remove('overlay-visible');
                     renderGroupsForEdital(currentEditalId);
-                } catch(error) {
+                } catch (error) {
                     console.error('Erro ao excluir grupo:', error);
                     Swal.fire('Erro!', 'Não foi possível excluir o grupo.', 'error');
                 }
@@ -225,11 +217,11 @@ document.addEventListener('DOMContentLoaded', function () {
                 body: JSON.stringify(updatedGroup)
             });
             if (!response.ok) throw new Error('Falha ao salvar alterações.');
-            
+
             const savedGroup = await response.json();
-            
+
             Swal.fire('Sucesso!', 'Grupo atualizado com sucesso!', 'success');
-            
+
             groupDetailsImage.src = savedGroup.imagem;
             groupDetailsName.textContent = savedGroup.nome;
             groupDetailsDescription.textContent = savedGroup.descricao;
@@ -280,7 +272,7 @@ document.addEventListener('DOMContentLoaded', function () {
             }
         }
     }
-    
+
     function updateSubscriptionStatus(edital) {
         if (!usuarioLogado) {
             btnInscricao.textContent = 'Faça login para se inscrever';
@@ -289,10 +281,9 @@ document.addEventListener('DOMContentLoaded', function () {
             return;
         }
 
-        // Verifica tanto o localStorage quanto a API
         const userSubscriptions = JSON.parse(localStorage.getItem('userSubscriptions')) || {};
-        const isSubscribed = userSubscriptions[edital.id] || 
-                           (edital.inscritos && edital.inscritos.includes(usuarioLogado.id));
+        const isSubscribed = userSubscriptions[edital.id] ||
+            (edital.inscritos && edital.inscritos.includes(usuarioLogado.id));
 
         if (isSubscribed) {
             btnInscricao.textContent = 'Cancelar Inscrição';
@@ -330,7 +321,6 @@ document.addEventListener('DOMContentLoaded', function () {
                 successMessage = 'Inscrito com sucesso!';
             }
 
-            // 1. Atualiza no JSON Server (API)
             const patchResponse = await fetch(`https://spotlight-backend-z6xo.onrender.com/noticias/${currentEditalId}`, {
                 method: 'PATCH',
                 headers: { 'Content-Type': 'application/json' },
@@ -338,12 +328,10 @@ document.addEventListener('DOMContentLoaded', function () {
             });
             if (!patchResponse.ok) throw new Error('A operação falhou.');
 
-            // 2. Atualiza no localStorage (persistência)
             const userSubscriptions = JSON.parse(localStorage.getItem('userSubscriptions')) || {};
             userSubscriptions[currentEditalId] = !isSubscribed; // true = inscrito, false = cancelado
             localStorage.setItem('userSubscriptions', JSON.stringify(userSubscriptions));
 
-            // 3. Atualiza a UI
             Swal.fire('Sucesso!', successMessage, 'success');
             updateSubscriptionStatus({ ...edital, inscritos: novosInscritos });
 
@@ -448,7 +436,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
                         updateFavoriteUI(parseInt(edital.id));
                         updateSubscriptionStatus(edital);
-                        
+
                         eventoSobreposicao.classList.add('overlay-visible');
 
                         const crudButtons = document.querySelector('.caixa-inscricao .produtor-only');
@@ -457,8 +445,7 @@ document.addEventListener('DOMContentLoaded', function () {
                         } else if (crudButtons) {
                             crudButtons.style.display = 'none';
                         }
-                        
-                        // Esconde botões para artistas
+
                         hideCrudButtonsForArtista();
                     }
                 });
@@ -474,7 +461,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
             renderizarGruposDaSidebar();
             updateProdutorElementsVisibility();
-            hideCrudButtonsForArtista(); // Aplica as restrições para artistas
+            hideCrudButtonsForArtista();
         } catch (error) {
             console.error("Erro ao carregar editais:", error);
         }
@@ -513,9 +500,9 @@ document.addEventListener('DOMContentLoaded', function () {
             grupoItem.dataset.id = edital.id;
             const iconContent = edital.imagem ? `<div class="grupo-icone" style="background-image: url('${edital.imagem}'); background-size: cover; background-position: center;"></div>` : `<div class="grupo-icone"><i class="fas fa-calendar-alt"></i></div>`;
             grupoItem.innerHTML = `${iconContent}<div class="grupo-info"><div class="grupo-nome">${edital.titulo}</div><div class="grupo-ultima-msg">Local: ${edital.local}</div></div>`;
-            
-            grupoItem.addEventListener('click', function() {
-                document.querySelectorAll('.card[data-id="'+this.dataset.id+'"] .card-title')[0].click();
+
+            grupoItem.addEventListener('click', function () {
+                document.querySelectorAll('.card[data-id="' + this.dataset.id + '"] .card-title')[0].click();
             });
 
             grupoLista.appendChild(grupoItem);
@@ -571,7 +558,7 @@ document.addEventListener('DOMContentLoaded', function () {
         event.preventDefault();
 
         if (!usuarioLogado || !usuarioLogado.produtor || isArtista()) {
-            Swal.fire('Permissão Negada','Apenas produtores podem adicionar/editar eventos.','error');
+            Swal.fire('Permissão Negada', 'Apenas produtores podem adicionar/editar eventos.', 'error');
             return;
         }
 
@@ -618,7 +605,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
     async function editarEvento(id) {
         if (!usuarioLogado || !usuarioLogado.produtor || isArtista()) {
-            Swal.fire('Permissão Negada','Apenas produtores podem editar eventos.','error');
+            Swal.fire('Permissão Negada', 'Apenas produtores podem editar eventos.', 'error');
             return;
         }
         try {
@@ -665,7 +652,7 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     fecharFormBtn.addEventListener('click', esconderFormulario);
-    
+
     btnEditarSobreposicao.addEventListener('click', function () {
         const id = this.dataset.id;
         if (id) editarEvento(id);
@@ -726,7 +713,7 @@ document.addEventListener('DOMContentLoaded', function () {
             });
 
             if (!response.ok) throw new Error('Falha ao criar o grupo.');
-            
+
             Swal.fire('Sucesso!', 'Grupo criado com sucesso!', 'success');
             hideCreateGroupModal();
             renderGroupsForEdital(currentEditalId);
@@ -757,7 +744,7 @@ document.addEventListener('DOMContentLoaded', function () {
             groupDetailsModal.classList.remove('overlay-visible');
         }
     });
-    
+
     carregarEditais();
-    hideCrudButtonsForArtista(); // Aplica as restrições para artistas ao carregar a página
+    hideCrudButtonsForArtista(); 
 });
